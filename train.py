@@ -6,15 +6,25 @@ from matplotlib.backends.backend_pdf import PdfPages
 from network import Network, Network1Comp
 import tensorflow as tf
 pdf = PdfPages("x.pdf")
-n=1000
+n=200
 
 # Define Data
-x = np.random.uniform(.5, 17.5, (n,1)).astype(np.float32)
+x_ = np.random.uniform(-15.5, 15.5, (n,1)).astype(np.float32)
 #y = x + 0.3 * np.sin(2 * np.pi * x) + np.random.uniform(-0.1, 0.1, size=(n,1)).astype(np.float32)
-y = np.sin(0.5 * x) * 5.0 + x * 0.5 + np.float32(np.random.normal(size=(n, 1))).astype(np.float32)
+y_ = (np.sin(0.5 * x_) * 5.0 + x_ * 0.5).astype(np.float32)
+func = lambda x : np.random.normal(x,x**2./100,1)
+y = []
+x = []
+for idx, i in enumerate(y_):
+	for j in range(10):
+		y+=list(func(i))
+		x+=list(x_[idx])
+
+y = np.array(y).reshape((-1,1)).astype(np.float32)
+x = np.array(x).reshape((-1,1)).astype(np.float32)
 
 # Read into TF dataset
-EPOCHS = 2000
+EPOCHS = 3000
 BATCH_SIZE=n
 dataset = tf.data.Dataset \
     					.from_tensor_slices((x, y)) \
@@ -52,6 +62,7 @@ for i in range(EPOCHS * (n//BATCH_SIZE)):
 	# # pd.DataFrame({'x': x, 'y': y, 'mu': mu, 'sigma': var, 'pi': pi})
 	# print("Epoch: {} Loss: {:3.3f} LR: {}".format(i, loss, lr))
 	print("Epoch: {} Loss: {:3.3f} RMSE {:3.3f}".format(i, loss2, rms2))
+
 fig, axs = plt.subplots(1,1)
 plt.plot(x, y, '.')
 plt.plot(best_x, best_mean_y, '.')

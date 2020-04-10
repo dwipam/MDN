@@ -49,7 +49,7 @@ class Network1Comp:
 		self.rmse = tf.sqrt(tf.reduce_mean(y - self.mean_y)**2.)
 
 		self.global_step = tf.Variable(0, trainable=False)
-		self.learning_rate = tf.train.exponential_decay(0.01, self.global_step, 2000, .9, staircase=False)
+		self.learning_rate = tf.train.exponential_decay(0.01, self.global_step, 3000, .99, staircase=False)
 		self.train_op = tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.mean_loss,global_step=self.global_step)
 		self.init = tf.global_variables_initializer()
 		self.init_l = tf.local_variables_initializer()
