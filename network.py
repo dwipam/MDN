@@ -23,7 +23,7 @@ class Network:
 
 		# -------------------- Not using Mixture Family ------------------------
 		self.mixture_distribution = tfp.distributions.Categorical(probs=self.pi)
-		self.distribution = fp.distributions.Normal(loc=self.mu, scale=self.var)
+		self.distribution = tfp.distributions.Normal(loc=self.mu, scale=self.var)
 		self.likelihood = tfp.distributions.MixtureSameFamily(
 															mixture_distribution=self.mixture_distribution,
         													components_distribution=self.distribution)
