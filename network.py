@@ -33,9 +33,9 @@ class Network:
 class Network1Comp:
 	def __init__(self, x, y):
 		self.x = x
-		self.layer_1 = tf.layers.dense(x, units=50, activation=tf.nn.softplus)
-		self.layer_2 = tf.layers.dense(self.layer_1, units=20, activation=tf.nn.softplus)
-		self.layer_3 = tf.layers.dense(self.layer_2, units=10, activation=tf.nn.softplus)
+		self.layer_1 = tf.layers.dense(x, units=100, activation=tf.nn.softplus)
+		self.layer_2 = tf.layers.dense(self.layer_1, units=70, activation=tf.nn.softplus)
+		self.layer_3 = tf.layers.dense(self.layer_2, units=20, activation=tf.nn.softplus)
 		self.mu = tf.layers.dense(self.layer_3, units=1, activation=None)
 		self.var = tf.layers.dense(self.layer_3, units=1, activation=tf.nn.softplus)
 
@@ -49,8 +49,7 @@ class Network1Comp:
 		self.rmse = tf.sqrt(tf.reduce_mean(y - self.mean_y)**2.)
 
 		self.global_step = tf.Variable(0, trainable=False)
-		self.learning_rate = tf.train.exponential_decay(0.01, self.global_step, 3000, .99, staircase=False)
-		self.train_op = tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.mean_loss,global_step=self.global_step)
+		self.train_op = tf.train.RMSPropOptimizer(learning_rate=0.01, decay=0.8).minimize(self.mean_loss,global_step=self.global_step)
 		self.init = tf.global_variables_initializer()
 		self.init_l = tf.local_variables_initializer()
 
