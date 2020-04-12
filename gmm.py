@@ -15,4 +15,5 @@ x = list(np.random.normal(mu1,sig1,500))+ list(np.random.normal(mu2,sig2,500))+l
 # Fit GMM
 model = GaussianMixture(n_components=3, max_iter=2000)
 model.fit(np.array(x).reshape(-1,1))
-print(sorted(zip(model.means_, np.sqrt(model.covariances_))))
+for mean, cov in sorted(zip(model.means_, np.sqrt(model.covariances_))):
+	print("Mean: {:4.1f} STD: {:4.1f}".format(mean[0], (cov)[0][0]))
