@@ -2,18 +2,17 @@ import tensorflow as tf
 import tensorflow_probability as tfp
 
 class Network:
-	def __init__(self, x, y, K=50):
+	def __init__(self, x, y, K=50, graph=tf.Graph()):
 		self.x = x
-		self.layer_1 = tf.layers.dense(x, units=50, activation=tf.nn.tanh, name="layer_1")
+		self.layer_1 = tf.layers.dense(x, units=50, activation=tf.nn.tanh)
 		self.layer_2 = tf.layers.dense(self.layer_1, units=20, activation=tf.nn.tanh)
-		self.layer_2 = tf.layers.dense(self.layer_2, units=20, activation=tf.nn.tanh)
-		self.layer_2 = tf.layers.dense(self.layer_2, units=20, activation=tf.nn.tanh)
-		self.layer_2 = tf.layers.dense(self.layer_2, units=20, activation=tf.nn.tanh, name="layer_2")
-		self.mu = tf.layers.dense(self.layer_2, units=K, activation=None, name="mu")
-		self.var = tf.exp(tf.layers.dense(self.layer_2, units=K, activation=tf.nn.softplus, name="sigma"))
-		self.pi = tf.layers.dense(self.layer_2, units=K, activation=tf.nn.softmax, name="mixing")
+		self.layer_3 = tf.layers.dense(self.layer_2, units=20, activation=tf.nn.tanh)
+		self.layer_4 = tf.layers.dense(self.layer_3, units=20, activation=tf.nn.tanh)
+		self.mu = tf.layers.dense(self.layer_4, units=K, activation=None, name="mu")
+		self.var = tf.exp(tf.layers.dense(self.layer_4, units=K, activation=tf.nn.softplus, name="sigma"))
+		self.pi = tf.layers.dense(self.layer_4, units=K, activation=tf.nn.softmax, name="pi")
 
-		# -------------------- Not using Mixture Family ------------------------
+		# -------------------- Not using TF Mixture Family ------------------------
 		# self.likelihood = tfp.distributions.Normal(loc=self.mu, scale=self.var)
 		# self.out = self.likelihood.prob(y)
 		# self.out = tf.multiply(self.out, self.pi)
@@ -21,7 +20,7 @@ class Network:
 		# self.out = -tf.log(self.out + 1e-10)
 		# self.mean_loss = tf.reduce_mean(self.out)
 
-		# -------------------- Not using Mixture Family ------------------------
+		# -------------------- Using TF Mixture Family ------------------------
 		self.mixture_distribution = tfp.distributions.Categorical(probs=self.pi)
 		self.distribution = tfp.distributions.Normal(loc=self.mu, scale=self.var)
 		self.likelihood = tfp.distributions.MixtureSameFamily(
